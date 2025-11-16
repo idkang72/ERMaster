@@ -38,6 +38,7 @@ Bundle-ClassPath: .,
  lib/poi-ooxml-4.1.2.jar,
  lib/poi-ooxml-schemas-4.1.2.jar,
  lib/SparseBitSet-1.2.jar,
+ lib/orai18n.jar,
  lib/xmlbeans-3.1.0.jar
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Eclipse-LazyStart: true
