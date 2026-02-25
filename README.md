@@ -1,25 +1,23 @@
 ### ERMaster
 
-このプログラムは、Eclipse Plugin の ERMasterを最新の環境に対応させたものです。
-機能はほとんどいじりません。最新ライブラリの対応とかが主です。
-[ERMasterの説明サイト](https://takahiro40264.github.io/ERMaster/ermaster_site/)
+takahiro40264님의 최신환경 대응 버전을 Fork한 것입니다.
+Update Site를 이용하여 Eclipse 2025-12R 버전에 설치하려고 하였으나
+org.eclipse.gef.common 의존성 문제와 erd(XML) 파일을 읽는 라이브러리의
+사용 문제로 오류가 발생하여 이 부분을 해결해 보고자 합니다.
 
-使い方はERMasterと同じです。  
-[ERMasterの使い方](https://ermaster.sourceforge.net/index_ja.html)
+Eclipse 플러그인 개발 경험이 전혀 없는 건 물론, EMF, GEF 등등의 패키지에 대한
+경험도 없기에 잘 될지 모르겠습니다.
 
-- 元祖ERMaster
-  - [開発リポジトリ](https://sourceforge.net/projects/ermaster/)
-- 同じくERMasterを修正した、ERMaster-bというプラグイン
-  - [開発リポジトリ](https://github.com/naoki-iwami/ermaster-b)
-- ERMasterをガッツリ変えたERFlute
-  - [開発リポジトリ](https://dbflute.seasar.org/ja/manual/function/helper/erflute/index.html)
-- ブラウザで動作する、ERMaster 代替を目指したツール ERD Designer
-  - [ホームページ](https://kajitiluna.github.io/erd-designer/)
+----
 
-License
---------
-[Apache License](http://www.apache.org/licenses/)
+원 개발자님이 보실지는 모르겠지만, 
 
-Home Page
---------
-https://takahiro40264.github.io/ERMaster/ermaster_site/
+정말 잘 사용하고 있습니다. 일본과 한국이 프로그램 개발시 영어권과는 다른 언어에 있어
+비슷한 고민이 있어서 그런지  한국어를 사용하는 입장에서 필요한 부분이 잘 구현되어 있습늬다.
+작은 규모의 서비스 개발시에는 이만한 툴이 없습니다.
+
+이런 툴을 만들어 주셔서 감사하게 생각하고 있습니다.
+
+적어도 Eclipse 2025-12R 버전에 동작하도록 수정된다면 이 README 파일을 갱신하도록 하겠습니다.
+
+여담이지만, 본격적으로 비싸지 않은 상용 버전을 만들 생각이 없으신지 궁굼하네요.
