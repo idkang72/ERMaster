@@ -70,9 +70,9 @@ public class ChangeBackgroundColorAction extends SelectionAction {
 				255, 255));
 		imageData.palette.colors[blackPixel] = this.rgb;
 
-		// if (this.image != null) {
-		// this.image.dispose();
-		// }
+		if (this.image != null) {
+			this.image.dispose();
+		}
 		this.image = new Image(Display.getCurrent(), imageData);
 
 		ImageDescriptor descriptor = ImageDescriptor.createFromImage(image);
@@ -89,15 +89,15 @@ public class ChangeBackgroundColorAction extends SelectionAction {
 
 		this.setColorToImage();
 	}
-	
+
 	public void setRGB() {
 		EditPart editPart = ((ERDiagramEditor) this.getWorkbenchPart())
 				.getGraphicalViewer().getContents();
 		ERDiagram diagram = (ERDiagram) editPart.getModel();
-		
+
 		this.rgb = diagram.getDefaultColorAsGRB();
-		
-		this.setColorToImage();		
+
+		this.setColorToImage();
 	}
 
 	/**
@@ -153,17 +153,17 @@ public class ChangeBackgroundColorAction extends SelectionAction {
 		for (int i = 0; i < objects.size(); i++) {
 			GraphicalEditPart part = (GraphicalEditPart) objects.get(i);
 			Object modelObject = part.getModel();
-			
+
 			if (modelObject instanceof ViewableModel) {
 				command.add(new ChangeBackgroundColorCommand(
 						(ViewableModel) modelObject, rgb.red, rgb.green,
 						rgb.blue));
-				
+
 			} else if (modelObject instanceof ConnectionElement) {
 				command.add(new ChangeConnectionColorCommand(
 						(ConnectionElement) modelObject, rgb.red, rgb.green,
 						rgb.blue));
-			
+
 			}
 		}
 
@@ -236,7 +236,10 @@ public class ChangeBackgroundColorAction extends SelectionAction {
 
 	@Override
 	public void dispose() {
-		this.image.dispose();
+		if (this.image != null && !this.image.isDisposed()) {
+	        this.image.dispose();
+	        this.image = null;
+	    }
 
 		super.dispose();
 	}

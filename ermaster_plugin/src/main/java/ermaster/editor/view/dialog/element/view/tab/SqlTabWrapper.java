@@ -26,6 +26,11 @@ public class SqlTabWrapper extends ValidatableTabWrapper {
 		this.sqlText = CompositeFactory.createTextArea(this.dialog, this,
 				"label.sql", -1, 400, 1, true, false);
 
+		// Eclipse 설정(Basic > Text Font)에 지정된 글꼴을 그대로 사용합니다.
+		if (this.sqlText != null && !this.sqlText.isDisposed()) {
+			this.sqlText.setFont(org.eclipse.jface.resource.JFaceResources.getFont(org.eclipse.jface.resource.JFaceResources.TEXT_FONT));
+		}
+
 		this.sqlText.setText(Format.null2blank(copyData.getSql()));
 	}
 

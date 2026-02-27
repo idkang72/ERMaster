@@ -78,10 +78,13 @@ public class ModelPropertiesFigure extends RectangleFigure {
 			this.addRow(property.getName(), property.getValue(), tableStyle);
 		}
 
+		String creationDateStr = (creationDate != null) ? DATE_FORMAT.format(creationDate) : "";
 		this.addRow(ResourceString.getResourceString("label.creation.date"),
-				DATE_FORMAT.format(creationDate), tableStyle);
+				creationDateStr, tableStyle);
+
+		String updatedDateStr = (updatedDate != null) ? DATE_FORMAT.format(updatedDate) : "";
 		this.addRow(ResourceString.getResourceString("label.updated.date"),
-				DATE_FORMAT.format(updatedDate), tableStyle);
+				updatedDateStr, tableStyle);
 	}
 
 	private void decideColor(int[] color) {

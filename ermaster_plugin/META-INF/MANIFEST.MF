@@ -40,7 +40,7 @@ Bundle-ClassPath: .,
  lib/SparseBitSet-1.2.jar,
  lib/orai18n.jar,
  lib/xmlbeans-3.1.0.jar
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Eclipse-LazyStart: true
 Export-Package: assets.org.apache.commons.math3.exception.util,
  assets.org.apache.commons.math3.random,
