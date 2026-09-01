@@ -61,8 +61,16 @@ public class NormalColumn extends Column {
 	}
 
 	protected NormalColumn(NormalColumn from) {
-		this.referencedColumnList.addAll(from.referencedColumnList);
-		this.relationList.addAll(from.relationList);
+		for (NormalColumn refCol : from.referencedColumnList) {
+			if (! this.referencedColumnList.contains(refCol)) {
+				this.referencedColumnList.add(refCol);
+			}
+		}
+		for (Relation rel : from.relationList) {
+			if (! this.relationList.contains(rel)) {
+				this.relationList.add(rel);
+			}
+		}
 
 		this.foreignKeyPhysicalName = from.foreignKeyPhysicalName;
 		this.foreignKeyLogicalName = from.foreignKeyLogicalName;
@@ -95,8 +103,12 @@ public class NormalColumn extends Column {
 
 		newColumn.word = null;
 
-		newColumn.referencedColumnList.add(this);
-		newColumn.relationList.add(relation);
+		if (! newColumn.referencedColumnList.contains(this)) {
+			newColumn.referencedColumnList.add(this);
+		}
+		if (relation != null && ! newColumn.relationList.contains(relation)) {
+			newColumn.relationList.add(relation);
+		}
 
 		copyData(this, newColumn);
 
@@ -365,9 +377,13 @@ public class NormalColumn extends Column {
 		this.foreignKeyLogicalName = this.getLogicalName();
 		this.foreignKeyPhysicalName = this.getPhysicalName();
 
-		this.referencedColumnList.add(referencedColumn);
+		if (referencedColumn != null && ! this.referencedColumnList.contains(referencedColumn)) {
+			this.referencedColumnList.add(referencedColumn);
+		}
 
-		this.relationList.add(relation);
+		if (relation != null && ! this.relationList.contains(relation)) {
+			this.relationList.add(relation);
+		}
 
 		copyData(this, this);
 

@@ -86,16 +86,23 @@ public abstract class NodeElement extends ViewableModel implements ObjectModel {
 	}
 
 	public void addIncoming(ConnectionElement relation) {
-		this.incomings.add(relation);
+		if (relation != null && ! this.incomings.contains(relation)) {
+			this.incomings.add(relation);
+		}
 	}
+
 
 	public void removeIncoming(ConnectionElement relation) {
 		this.incomings.remove(relation);
 	}
 
+
 	public void addOutgoing(ConnectionElement relation) {
-		this.outgoings.add(relation);
+		if (relation != null && ! this.outgoings.contains(relation)) {
+			this.outgoings.add(relation);
+		}
 	}
+
 
 	public void removeOutgoing(ConnectionElement relation) {
 		this.outgoings.remove(relation);

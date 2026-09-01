@@ -214,11 +214,13 @@ public class XMLLoader {
 
 						NormalColumn referencedColumn = this.columnMap
 								.get(referencedColumnId);
-						referencedColumnList.add(referencedColumn);
+						if (referencedColumn != null && ! referencedColumnList.contains(referencedColumn)) {
+							referencedColumnList.add(referencedColumn);
 
-						if (foreignKeyColumnSet.contains(referencedColumn)
-								&& foreignKeyColumn != referencedColumn) {
-							reduce(foreignKeyColumnSet, referencedColumn);
+							if (foreignKeyColumnSet.contains(referencedColumn)
+									&& foreignKeyColumn != referencedColumn) {
+								reduce(foreignKeyColumnSet, referencedColumn);
+							}
 						}
 
 					} catch (NumberFormatException e) {
@@ -227,18 +229,26 @@ public class XMLLoader {
 			}
 
 			if (relationIds != null) {
+				Set<String> processedRelationIds = new HashSet<String>();
 				for (String relationId : relationIds) {
 					try {
+						if (processedRelationIds.contains(relationId)) {
+							continue;
+						}
+						processedRelationIds.add(relationId);
+
 						Integer.parseInt(relationId);
 
 						Relation relation = (Relation) this.connectionMap
 								.get(relationId);
-						for (NormalColumn referencedColumn : referencedColumnList) {
-							if (referencedColumn.getColumnHolder() == relation
-									.getSourceTableView()) {
-								foreignKeyColumn.addReference(referencedColumn,
-										relation);
-								break;
+						if (relation != null) {
+							for (NormalColumn referencedColumn : referencedColumnList) {
+								if (referencedColumn.getColumnHolder() == relation
+										.getSourceTableView()) {
+									foreignKeyColumn.addReference(referencedColumn,
+											relation);
+									break;
+								}
 							}
 						}
 
@@ -1804,6 +1814,11 @@ public class XMLLoader {
 	}
 
 	private void loadRelation(Element element, LoadContext context) {
+		String id = this.getStringValue(element, "id");
+		if (id != null && context.connectionMap.containsKey(id)) {
+			return;
+		}
+
 		boolean referenceForPK = this.getBooleanValue(element,
 				"reference_for_pk");
 		Relation connection = new Relation(referenceForPK, null, null, true,
@@ -1837,6 +1852,11 @@ public class XMLLoader {
 	}
 
 	private void loadCommentConnection(Element element, LoadContext context) {
+		String id = this.getStringValue(element, "id");
+		if (id != null && context.connectionMap.containsKey(id)) {
+			return;
+		}
+
 		CommentConnection connection = new CommentConnection();
 
 		this.load(connection, element, context);

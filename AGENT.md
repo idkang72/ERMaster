@@ -147,15 +147,20 @@ ermaster/
    - **JSON / JSONB**: MySQL, MariaDB, PostgreSQL, Oracle 21c/23c+ 지원.
    - **UUID**: MariaDB 10.7+, PostgreSQL, H2, SQL Server(`uniqueidentifier`) 지원.
    - **공간(Spatial/GIS) 데이터 타입**: `GEOMETRY`, `POINT`, `LINESTRING`, `POLYGON`, `MULTIPOINT`, `GEOMETRYCOLLECTION`, `GEOGRAPHY` 지원 (MySQL, MariaDB, PostgreSQL, SQL Server).
+   - **Vector 데이터 타입**: `VECTOR(n)` 차원 수 입력 및 DDL 지원 (MySQL 9.0+, MariaDB 11.7+, PostgreSQL/pgvector, Oracle 23ai, SQL Server 2025).
    - **네트워크 주소 타입**: `INET4`, `INET6` (MariaDB 10.10+), `INET` (PostgreSQL).
    - **Boolean**: Oracle 23c+ `BOOLEAN`, MySQL/MariaDB `BOOLEAN` 지원.
-5. **SWT Image Resource 안전한 Dispose 처리**:
+5. **관계 정보(`<connections>`, `<relation>`) XML 중복 생성 및 누적 방지**:
+   - `NodeElement.java`: `incomings`/`outgoings` 리스트 추가 시 중복 객체 유입 차단.
+   - `PersistentXmlImpl.java`: XML 직렬화 시 동일 관계의 중복 출력을 필터링하여 파일 크기 팽창 방지.
+   - `XMLLoader.java`: 기존 중복 관계 태그가 존재하는 `.erm` 파일을 읽을 때 1회만 로드하도록 중복 방어.
+6. **SWT Image Resource 안전한 Dispose 처리**:
    - `ChangeBackgroundColorAction.java`: 에디터 닫기/색상 변경 시 이미 dispose된 이미지 객체에 재접근하여 발생하는 SWT 예외 방지 (`!image.isDisposed()` 검증 추가).
-6. **구버전 `.erm` 파일 로드 호환성 강화**:
+7. **구버전 `.erm` 파일 로드 호환성 강화**:
    - `ModelPropertiesFigure.java`: 이전 버전에서 생성일시/갱신일시 속성이 누락된 구형 `.erm` 파일을 열 때 발생하는 Null Pointer 오류 방어 로직 추가.
-7. **UI 편의성 개선**:
+8. **UI 편의성 개선**:
    - `SqlTabWrapper.java`: View 편집 대화상자의 SQL 편집창에 Eclipse 기본 고정폭(Monospace) 글꼴을 적용하여 가독성 개선.
-8. **Oracle i18n 라이브러리 추가**:
+9. **Oracle i18n 라이브러리 추가**:
    - Oracle DB 접속 및 다국어 인코딩 지원을 위한 `orai18n.jar` 종속성 추가.
 
 ---

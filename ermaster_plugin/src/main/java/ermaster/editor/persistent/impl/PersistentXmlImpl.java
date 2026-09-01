@@ -7,8 +7,10 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import ermaster.db.impl.db2.tablespace.DB2TablespaceProperties;
 import ermaster.db.impl.mysql.MySQLTableProperties;
@@ -124,9 +126,11 @@ public class PersistentXmlImpl extends Persistent {
 			List<ConnectionElement> connections = content.getIncomings();
 
 			for (ConnectionElement connection : connections) {
-				context.connectionMap.put(connection, new Integer(
-						connectionCount));
-				connectionCount++;
+				if (! context.connectionMap.containsKey(connection)) {
+					context.connectionMap.put(connection, new Integer(
+							connectionCount));
+					connectionCount++;
+				}
 			}
 
 			if (content instanceof ERTable) {
@@ -1472,14 +1476,26 @@ public class PersistentXmlImpl extends Persistent {
 
 			xml.append("\t<id>").append(context.columnMap.get(normalColumn))
 					.append("</id>\n");
+
+			Set<NormalColumn> writtenReferencedColumns = new HashSet<NormalColumn>();
 			for (NormalColumn referencedColumn : normalColumn
 					.getReferencedColumnList()) {
+				if (referencedColumn == null || writtenReferencedColumns.contains(referencedColumn)) {
+					continue;
+				}
+				writtenReferencedColumns.add(referencedColumn);
 				xml.append("\t<referenced_column>")
 						.append(Format.toString(context.columnMap
 								.get(referencedColumn)))
 						.append("</referenced_column>\n");
 			}
+
+			Set<Relation> writtenRelations = new HashSet<Relation>();
 			for (Relation relation : normalColumn.getRelationList()) {
+				if (relation == null || writtenRelations.contains(relation)) {
+					continue;
+				}
+				writtenRelations.add(relation);
 				xml.append("\t<relation>")
 						.append(context.connectionMap.get(relation))
 						.append("</relation>\n");
@@ -1543,7 +1559,13 @@ public class PersistentXmlImpl extends Persistent {
 
 		xml.append("<connections>\n");
 
+		Set<ConnectionElement> writtenConnections = new HashSet<ConnectionElement>();
+
 		for (ConnectionElement connection : incomings) {
+			if (connection == null || writtenConnections.contains(connection)) {
+				continue;
+			}
+			writtenConnections.add(connection);
 
 			if (connection instanceof CommentConnection) {
 				xml.append(tab(this.createXML((CommentConnection) connection,
