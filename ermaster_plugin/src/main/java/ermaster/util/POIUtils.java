@@ -173,13 +173,9 @@ public class POIUtils {
 	}
 
 	public static String getCellValue(XSSFSheet sheet, CellLocation location) {
-		XSSFRow row = sheet.getRow(location.r);
-		XSSFCell cell = row.getCell(location.c);
-
-		XSSFRichTextString cellValue = cell.getRichStringCellValue();
-
-		return cellValue.toString();
+		return getCellValue(sheet, location.r, location.c);
 	}
+
 
 	public static String getCellValue(XSSFSheet sheet, int r, int c) {
 		XSSFRow row = sheet.getRow(r);
@@ -194,9 +190,30 @@ public class POIUtils {
 			return null;
 		}
 
-		XSSFRichTextString cellValue = cell.getRichStringCellValue();
+		CellType cellType = cell.getCellType();
+		if (cellType == CellType.FORMULA) {
+			cellType = cell.getCachedFormulaResultType();
+		}
 
-		return cellValue.toString();
+		switch (cellType) {
+		case STRING:
+			return cell.getStringCellValue();
+
+		case NUMERIC:
+			double num = cell.getNumericCellValue();
+			if (num == (long) num) {
+				return String.valueOf((long) num);
+			}
+
+			return String.valueOf(num);
+
+		case BOOLEAN:
+			return String.valueOf(cell.getBooleanCellValue());
+
+		case BLANK:
+		default:
+			return "";
+		}
 	}
 
 	public static int getIntCellValue(XSSFSheet sheet, int r, int c) {
@@ -205,20 +222,32 @@ public class POIUtils {
 			return 0;
 		}
 		XSSFCell cell = row.getCell(c);
-
-		try {
-			if (cell.getCellType() != CellType.NUMERIC) {
-				return 0;
-			}
-		} catch (RuntimeException e) {
-			System.err.println("Exception at sheet name:"
-					+ sheet.getSheetName() + ", row:" + (r + 1) + ", col:"
-					+ (c + 1));
-			throw e;
+		if (cell == null) {
+			return 0;
 		}
 
-		return (int) cell.getNumericCellValue();
+		CellType cellType = cell.getCellType();
+		if (cellType == CellType.FORMULA) {
+			cellType = cell.getCachedFormulaResultType();
+		}
+
+		try {
+			if (cellType == CellType.NUMERIC) {
+				return (int) cell.getNumericCellValue();
+			}
+			if (cellType == CellType.STRING) {
+				String str = cell.getStringCellValue().trim();
+				if (! Check.isEmpty(str)) {
+					return Integer.parseInt(str);
+				}
+			}
+		} catch (Exception e) {
+			return 0;
+		}
+
+		return 0;
 	}
+
 
 	public static boolean getBooleanCellValue(XSSFSheet sheet, int r, int c) {
 		XSSFRow row = sheet.getRow(r);
@@ -233,14 +262,27 @@ public class POIUtils {
 			return false;
 		}
 
-		try {
-			return cell.getBooleanCellValue();
-		} catch (RuntimeException e) {
-			System.err.println("Exception at sheet name:"
-					+ sheet.getSheetName() + ", row:" + (r + 1) + ", col:"
-					+ (c + 1));
-			throw e;
+		CellType cellType = cell.getCellType();
+		if (cellType == CellType.FORMULA) {
+			cellType = cell.getCachedFormulaResultType();
 		}
+
+		try {
+			if (cellType == CellType.BOOLEAN) {
+				return cell.getBooleanCellValue();
+			}
+			if (cellType == CellType.STRING) {
+				String str = cell.getStringCellValue().trim();
+				return "true".equalsIgnoreCase(str) || "1".equals(str);
+			}
+			if (cellType == CellType.NUMERIC) {
+				return cell.getNumericCellValue() != 0;
+			}
+		} catch (Exception e) {
+			return false;
+		}
+
+		return false;
 	}
 
 	public static short getCellColor(XSSFSheet sheet, int r, int c) {
@@ -249,6 +291,9 @@ public class POIUtils {
 			return -1;
 		}
 		XSSFCell cell = row.getCell(c);
+		if (cell == null) {
+			return -1;
+		}
 
 		return cell.getCellStyle().getFillForegroundColor();
 	}

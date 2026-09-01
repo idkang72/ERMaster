@@ -8,6 +8,7 @@ import ermaster.db.impl.access.AccessDBManager;
 import ermaster.db.impl.db2.DB2DBManager;
 import ermaster.db.impl.h2.H2DBManager;
 import ermaster.db.impl.hsqldb.HSQLDBDBManager;
+import ermaster.db.impl.mariadb.MariaDBDBManager;
 import ermaster.db.impl.mysql.MySQLDBManager;
 import ermaster.db.impl.oracle.OracleDBManager;
 import ermaster.db.impl.postgres.PostgresDBManager;
@@ -30,6 +31,7 @@ public class DBManagerFactory {
 		new H2DBManager();
 		new HSQLDBDBManager();
 		new MySQLDBManager();
+		new MariaDBDBManager();
 		new OracleDBManager();
 		new PostgresDBManager();
 		new SQLiteDBManager();

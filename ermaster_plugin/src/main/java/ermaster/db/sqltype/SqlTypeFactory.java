@@ -59,12 +59,18 @@ public class SqlTypeFactory {
 				SqlType sqlType = new SqlType(sqlTypeId, javaClass, needArgs,
 						fullTextIndexable);
 
-				for (int colNum = 4; colNum < row.getLastCellNum(); colNum += 6) {
+				for (int colNum = 4; colNum < headerRow.getLastCellNum(); colNum += 6) {
 
 					String dbId = POIUtils.getCellValue(sheet, 0, colNum);
+					if (Check.isEmpty(dbId)) {
+						continue;
+					}
 
 					Map<SqlType, String> sqlTypeToAliasMap = dbSqlTypeToAliasMap.get(dbId);
 					Map<String, SqlType> aliasToSqlTypeMap = dbAliasToSqlTypeMap.get(dbId);
+					if (sqlTypeToAliasMap == null || aliasToSqlTypeMap == null) {
+						continue;
+					}
 
 					if (POIUtils.getCellColor(sheet, rowNum, colNum) != IndexedColors.GREY_50_PERCENT.index) {
 						

@@ -8,6 +8,7 @@ import ermaster.db.impl.access.AccessEclipseDBManager;
 import ermaster.db.impl.db2.DB2EclipseDBManager;
 import ermaster.db.impl.h2.H2EclipseDBManager;
 import ermaster.db.impl.hsqldb.HSQLDBEclipseDBManager;
+import ermaster.db.impl.mariadb.MariaDBEclipseDBManager;
 import ermaster.db.impl.mysql.MySQLEclipseDBManager;
 import ermaster.db.impl.oracle.OracleEclipseDBManager;
 import ermaster.db.impl.postgres.PostgresEclipseDBManager;
@@ -28,6 +29,7 @@ public class EclipseDBManagerFactory {
 		new H2EclipseDBManager();
 		new HSQLDBEclipseDBManager();
 		new MySQLEclipseDBManager();
+		new MariaDBEclipseDBManager();
 		new OracleEclipseDBManager();
 		new PostgresEclipseDBManager();
 		new SQLiteEclipseDBManager();

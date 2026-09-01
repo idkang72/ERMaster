@@ -65,10 +65,32 @@ public class ChangeBackgroundColorAction extends SelectionAction {
 	private void setColorToImage() {
 		ImageData imageData = ERDiagramActivator.getImageDescriptor(
 				ImageKey.CHANGE_BACKGROUND_COLOR).getImageData();
-		int blackPixel = imageData.palette.getPixel(new RGB(0, 0, 0));
 		imageData.transparentPixel = imageData.palette.getPixel(new RGB(255,
 				255, 255));
-		imageData.palette.colors[blackPixel] = this.rgb;
+		// 1. 투명색 설정 (하얀색을 투명으로)
+		imageData.transparentPixel = imageData.palette.getPixel(new RGB(255, 255, 255));
+
+		// 2. 검정색(0,0,0) 부분을 선택된 색상(this.rgb)으로 교체
+		if (imageData.palette.isDirect) {
+			// [리눅스 대응] 다이렉트 컬러 방식일 경우 픽셀 전체를 순회하며 색상 교체
+			int blackPixel = imageData.palette.getPixel(new RGB(0, 0, 0));
+			int newPixel = imageData.palette.getPixel(this.rgb);
+
+			for (int y = 0; y < imageData.height; y++) {
+				for (int x = 0; x < imageData.width; x++) {
+					if (imageData.getPixel(x, y) == blackPixel) {
+						imageData.setPixel(x, y, newPixel);
+					}
+				}
+			}
+		}
+		else {
+			// [윈도우 대응] 인덱스 컬러 방식일 경우 기존처럼 팔레트 배열 수정
+			int blackPixel = imageData.palette.getPixel(new RGB(0, 0, 0));
+			if (imageData.palette.colors != null && blackPixel < imageData.palette.colors.length) {
+				imageData.palette.colors[blackPixel] = this.rgb;
+			}
+		}
 
 		if (this.image != null) {
 			this.image.dispose();

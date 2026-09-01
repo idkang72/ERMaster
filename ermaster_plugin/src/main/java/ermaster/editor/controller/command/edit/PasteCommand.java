@@ -1,9 +1,11 @@
 package ermaster.editor.controller.command.edit;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.eclipse.gef.EditPart;
 import org.eclipse.gef.GraphicalViewer;
+import org.eclipse.jface.viewers.StructuredSelection;
 import ermaster.editor.ERDiagramEditor;
 import ermaster.editor.controller.command.AbstractCommand;
 import ermaster.editor.model.ERDiagram;
@@ -158,12 +160,16 @@ public class PasteCommand extends AbstractCommand {
 	 * 貼り付けられたテーブルを選択状態にします。
 	 */
 	private void setFocus() {
-		// 貼り付けられたテーブルを選択状態にします。
+		List<EditPart> editParts = new ArrayList<EditPart>();
+
 		for (NodeElement nodeElement : this.nodeElements) {
 			EditPart editPart = (EditPart) viewer.getEditPartRegistry().get(
 					nodeElement);
-
-			this.viewer.getSelectionManager().appendSelection(editPart);
+			if (editPart != null) {
+				editParts.add(editPart);
+			}
 		}
+
+		this.viewer.setSelection(new StructuredSelection(editParts));
 	}
 }

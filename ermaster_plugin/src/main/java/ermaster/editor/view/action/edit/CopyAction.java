@@ -39,17 +39,25 @@ public class CopyAction extends SelectionAction {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	protected boolean calculateEnabled() {
 		List<EditPart> list = new ArrayList<EditPart>();
+
+		for (Object object : this.getSelectedObjects()) {
+			if (object instanceof EditPart) {
+				list.add((EditPart) object);
+			}
+		}
 
 		if (list.isEmpty()) {
 			return false;
 		}
-		if (list.size() == 1 && list.get(0) instanceof ModelPropertiesEditPart
-				|| list.get(0) instanceof ERDiagramEditPart) {
+
+		if (list.size() == 1
+				&& (list.get(0) instanceof ModelPropertiesEditPart
+						|| list.get(0) instanceof ERDiagramEditPart)) {
 			return false;
 		}
+
 
 		return true;
 	}
@@ -62,8 +70,9 @@ public class CopyAction extends SelectionAction {
 		copy();
 	}
 
+
 	private void copy() {
-		if (!calculateEnabled()) {
+		if (! calculateEnabled()) {
 			return;
 		}
 
@@ -82,5 +91,4 @@ public class CopyAction extends SelectionAction {
 
 		CopyManager.copy(nodeElementList);
 	}
-
 }
