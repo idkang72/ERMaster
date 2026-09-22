@@ -8,6 +8,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 
 public class XYChopboxAnchor extends ChopboxAnchor {
 
+	private static final int EDGE_TOLERANCE = 2;
+
 	private Point location;
 
 	public XYChopboxAnchor(IFigure owner) {
@@ -26,20 +28,42 @@ public class XYChopboxAnchor extends ChopboxAnchor {
 	 */
 	@Override
 	public Point getLocation(Point reference) {
+		Rectangle r = new Rectangle(this.getBox());
+		r.translate(-1, -1);
+		r.resize(1, 1);
+		this.getOwner().translateToAbsolute(r);
+
 		if (this.location != null) {
 			Point point = new Point(this.location);
 			this.getOwner().translateToAbsolute(point);
+
+			if (reference != null) {
+				boolean isLeftEdge = Math.abs(point.x - r.x) <= EDGE_TOLERANCE;
+				boolean isRightEdge = Math.abs(point.x - r.right()) <= EDGE_TOLERANCE;
+
+				if ((isLeftEdge || isRightEdge) && reference.y >= r.y && reference.y <= r.bottom()) {
+					int x = isLeftEdge ? r.x : r.right();
+
+
+					return new Point(x, reference.y);
+				}
+
+				boolean isTopEdge = Math.abs(point.y - r.y) <= EDGE_TOLERANCE;
+				boolean isBottomEdge = Math.abs(point.y - r.bottom()) <= EDGE_TOLERANCE;
+
+				if ((isTopEdge || isBottomEdge) && reference.x >= r.x && reference.x <= r.right()) {
+					int y = isTopEdge ? r.y : r.bottom();
+
+
+					return new Point(reference.x, y);
+				}
+			}
 
 
 			return point;
 		}
 
 		if (reference != null) {
-			Rectangle r = new Rectangle(this.getBox());
-			r.translate(-1, -1);
-			r.resize(1, 1);
-			this.getOwner().translateToAbsolute(r);
-
 			if (! r.isEmpty() && ! r.contains(reference)) {
 				if (reference.y >= r.y && reference.y <= r.bottom()) {
 					if (reference.x < r.x) {
