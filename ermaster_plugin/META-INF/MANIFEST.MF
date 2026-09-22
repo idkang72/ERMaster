@@ -4,7 +4,7 @@ Automatic-Module-Name: ermaster.plugin
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: ermaster_plugin;singleton:=true
 Bundle-Vendor: HighWideSystem
-Bundle-Version: 0.0.7
+Bundle-Version: 0.0.7.3
 Bundle-Activator: ermaster.ERDiagramActivator
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,

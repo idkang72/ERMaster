@@ -413,7 +413,7 @@ public class ERDiagramEditor extends GraphicalEditorWithPalette {
 		this.addKeyHandler(zoomOutAction);
 
 		IFigure gridLayer = rootEditPart.getLayer(LayerConstants.GRID_LAYER);
-		gridLayer.setForegroundColor(Resources.GRID_COLOR);
+		gridLayer.setForegroundColor(Resources.getGridColor(viewer.getControl()));
 
 		IAction action = new ToggleGridAction(viewer);
 		this.getActionRegistry().registerAction(action);

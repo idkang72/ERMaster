@@ -14,6 +14,7 @@ import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.Request;
 import org.eclipse.gef.RequestConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.PlatformUI;
 import ermaster.editor.controller.command.diagram_contents.element.connection.relation.ChangeRelationPropertyCommand;
 import ermaster.editor.controller.editpart.element.node.ERTableEditPart;
@@ -166,6 +167,12 @@ public class RelationEditPart extends AbstractERDiagramConnectionEditPart {
 			connection.setTargetDecoration(decoration.getTargetDecoration());
 			
 			this.targetLabel.setText(Format.null2blank(decoration.getTargetLabel()));
+			if (connection instanceof ERDiagramConnection) {
+				Color color = ((ERDiagramConnection) connection).getColor();
+				if (color != null) {
+					this.targetLabel.setForegroundColor(color);
+				}
+			}
 		}
 	}
 

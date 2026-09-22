@@ -37,10 +37,33 @@ public class ERDiagramConnection extends PolylineConnection {
 
 	public void setColor(Color color) {
 		this.color = color;
+		this.setForegroundColor(color);
 	}
 
 	public Color getColor() {
 		return color;
+	}
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Color getForegroundColor() {
+		if (this.color != null && ! this.color.isDisposed()) {
+
+
+			return this.color;
+		}
+
+		if (Resources.isDarkMode()) {
+
+
+			return Resources.getColor(Resources.DEFAULT_DARK_CONNECTION_COLOR);
+		}
+
+
+		return ColorConstants.black;
 	}
 
 	/**
@@ -51,7 +74,11 @@ public class ERDiagramConnection extends PolylineConnection {
 		g.setAntialias(SWT.ON);
 
 		if (this.color == null) {
-			this.color = ColorConstants.black;
+			if (Resources.isDarkMode()) {
+				this.color = Resources.getColor(Resources.DEFAULT_DARK_CONNECTION_COLOR);
+			} else {
+				this.color = ColorConstants.black;
+			}
 		}
 
 		g.setForegroundColor(this.color);
@@ -70,6 +97,13 @@ public class ERDiagramConnection extends PolylineConnection {
 		}
 
 		PointList points = getBezierPoints();
+
+		if (! this.selected) {
+			g.drawPolyline(points);
+
+
+			return;
+		}
 
 		int width = g.getLineWidth();
 
@@ -102,11 +136,13 @@ public class ERDiagramConnection extends PolylineConnection {
 				blue = lineBlue;
 			}
 
-			color = new Color(Display.getCurrent(), red, green, blue);
+			Color blendColor = new Color(Display.getCurrent(), red, green, blue);
 
 			g.setLineWidth(width);
-			g.setForegroundColor(color);
+			g.setForegroundColor(blendColor);
 			g.drawPolyline(points);
+
+			blendColor.dispose();
 
 			width -= 2;
 		}

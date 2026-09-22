@@ -1,5 +1,6 @@
 package ermaster.util;
 
+import ermaster.db.impl.mariadb.MariaDBDBManager;
 import ermaster.db.impl.mysql.MySQLDBManager;
 import ermaster.db.impl.postgres.PostgresDBManager;
 import ermaster.db.sqltype.SqlType;
@@ -53,12 +54,14 @@ public class Format {
 				}
 
 				if (sqlType.isNumber() && typeData.isUnsigned()
-						&& MySQLDBManager.ID.equals(database)) {
+						&& (MySQLDBManager.ID.equals(database)
+								|| MariaDBDBManager.ID.equals(database))) {
 					type += " unsigned";
 				}
 
 				if (sqlType.isNumber() && typeData.isZerofill()
-						&& MySQLDBManager.ID.equals(database)) {
+						&& (MySQLDBManager.ID.equals(database)
+								|| MariaDBDBManager.ID.equals(database))) {
 					type += " zerofill";
 				}
 

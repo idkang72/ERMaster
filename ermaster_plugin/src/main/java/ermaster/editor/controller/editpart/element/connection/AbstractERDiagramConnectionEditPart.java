@@ -16,6 +16,8 @@ import org.eclipse.gef.EditPart;
 import org.eclipse.gef.EditPolicy;
 import org.eclipse.gef.editparts.AbstractConnectionEditPart;
 import org.eclipse.gef.editpolicies.ConnectionEndpointEditPolicy;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Control;
 import ermaster.ERDiagramActivator;
 import ermaster.Resources;
 import ermaster.editor.controller.editpart.element.node.NodeElementEditPart;
@@ -122,8 +124,10 @@ public abstract class AbstractERDiagramConnectionEditPart extends
 		if (this.isActive()) {
 			ConnectionElement element = (ConnectionElement) this.getModel();
 
-			((ERDiagramConnection) this.figure).setColor(Resources
-					.getColor(element.getColor()));
+			Control control = (this.getViewer() != null) ? this.getViewer().getControl() : null;
+			Color connectionColor = Resources.getConnectionColor(element.getColor(), control);
+
+			((ERDiagramConnection) this.figure).setColor(connectionColor);
 
 			this.fillterConnectionByCategory();
 			this.decorateRelation();

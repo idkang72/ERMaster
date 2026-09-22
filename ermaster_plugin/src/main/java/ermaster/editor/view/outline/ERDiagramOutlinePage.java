@@ -194,4 +194,17 @@ public class ERDiagramOutlinePage extends ContentOutlinePage {
 		return super.getViewer();
 	}
 
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void dispose() {
+		if (this.thumbnail != null) {
+			this.thumbnail.deactivate();
+		}
+
+		super.dispose();
+	}
+
 }

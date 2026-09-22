@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import ermaster.common.dialog.AbstractDialog;
 import ermaster.common.widgets.CompositeFactory;
+import ermaster.db.impl.mariadb.MariaDBDBManager;
 import ermaster.db.impl.mysql.MySQLDBManager;
 import ermaster.db.impl.oracle.OracleDBManager;
 import ermaster.db.impl.postgres.PostgresDBManager;
@@ -151,7 +152,8 @@ public abstract class AbstractWordDialog extends AbstractDialog {
 
 		}
 
-		if (MySQLDBManager.ID.equals(this.diagram.getDatabase())) {
+		if (MySQLDBManager.ID.equals(this.diagram.getDatabase())
+				|| MariaDBDBManager.ID.equals(this.diagram.getDatabase())) {
 			CompositeFactory.filler(composite, 1);
 
 			Composite childComposite = CompositeFactory.createChildComposite(

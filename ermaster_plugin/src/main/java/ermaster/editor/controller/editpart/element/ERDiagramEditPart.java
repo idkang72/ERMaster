@@ -9,11 +9,14 @@ import org.eclipse.draw2d.FreeformLayout;
 import org.eclipse.draw2d.IFigure;
 import org.eclipse.gef.CompoundSnapToHelper;
 import org.eclipse.gef.EditPolicy;
+import org.eclipse.gef.LayerConstants;
 import org.eclipse.gef.SnapToGeometry;
 import org.eclipse.gef.SnapToGrid;
 import org.eclipse.gef.SnapToHelper;
+import org.eclipse.gef.editparts.LayerManager;
 import org.eclipse.gef.editpolicies.SnapFeedbackPolicy;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Control;
 import ermaster.Resources;
 import ermaster.editor.controller.editpart.element.node.NodeElementEditPart;
 import ermaster.editor.controller.editpolicy.ERDiagramLayoutEditPolicy;
@@ -170,8 +173,26 @@ public class ERDiagramEditPart extends AbstractModelEditPart {
 		int[] color = element.getColor();
 
 		if (color != null) {
-			Color bgColor = Resources.getColor(color);
-			this.getViewer().getControl().setBackground(bgColor);
+			Control control = (this.getViewer() != null) ? this.getViewer().getControl() : null;
+			Color bgColor;
+			if (Resources.isDarkMode(control) && (color[0] == 255 && color[1] == 255 && color[2] == 255)) {
+				bgColor = Resources.getColor(Resources.DEFAULT_DARK_CANVAS_COLOR);
+			} else {
+				bgColor = Resources.getColor(color);
+			}
+
+			if (control != null && ! control.isDisposed()) {
+				control.setBackground(bgColor);
+			}
+		}
+
+		if (this.getRoot() instanceof LayerManager) {
+			IFigure gridLayer = ((LayerManager) this.getRoot())
+					.getLayer(LayerConstants.GRID_LAYER);
+			if (gridLayer != null) {
+				Control control = (this.getViewer() != null) ? this.getViewer().getControl() : null;
+				gridLayer.setForegroundColor(Resources.getGridColor(control));
+			}
 		}
 
 		for (Object child : this.getChildren()) {

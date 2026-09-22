@@ -3,7 +3,7 @@
    <description name="ERMaster" url="https://takahiro40264.github.io/ERMaster/ermaster_site/">
       ERMasterの2025年最新版
    </description>
-   <feature url="features/ermaster_feature_0.0.7.jar" id="ermaster_feature" version="0.0.7">
+   <feature url="features/ermaster_feature_0.0.7.3.jar" id="ermaster_feature" version="0.0.7.3">
       <category name="ermaster-category"/>
    </feature>
    <category-def name="ermaster-category" label="ERMaster">
