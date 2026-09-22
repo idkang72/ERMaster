@@ -10,18 +10,38 @@ public class XYChopboxAnchor extends ChopboxAnchor {
 
 	private static final int EDGE_TOLERANCE = 3;
 
-	private static final int SNAP_THRESHOLD = 30;
+	private static final int SNAP_THRESHOLD = 4;
 
 	private Point location;
 
+	private boolean orthogonal;
+
+
 	public XYChopboxAnchor(IFigure owner) {
+		this(owner, false);
+	}
+
+
+	public XYChopboxAnchor(IFigure owner, boolean orthogonal) {
 		super(owner);
+		this.orthogonal = orthogonal;
 	}
 
 
 	public void setLocation(Point location) {
 		this.location = location;
 		this.fireAnchorMoved();
+	}
+
+
+	public void setOrthogonal(boolean orthogonal) {
+		this.orthogonal = orthogonal;
+		this.fireAnchorMoved();
+	}
+
+
+	public boolean isOrthogonal() {
+		return this.orthogonal;
 	}
 
 
@@ -39,7 +59,7 @@ public class XYChopboxAnchor extends ChopboxAnchor {
 			Point point = new Point(this.location);
 			this.getOwner().translateToAbsolute(point);
 
-			if (reference != null) {
+			if (this.orthogonal && reference != null) {
 				boolean isLeftEdge = Math.abs(point.x - r.x) <= EDGE_TOLERANCE;
 				boolean isRightEdge = Math.abs(point.x - r.right()) <= EDGE_TOLERANCE;
 
@@ -69,7 +89,7 @@ public class XYChopboxAnchor extends ChopboxAnchor {
 			return point;
 		}
 
-		if (reference != null) {
+		if (this.orthogonal && reference != null) {
 			if (! r.isEmpty() && ! r.contains(reference)) {
 				if (reference.y >= r.y && reference.y <= r.bottom()) {
 					if (reference.x < r.x) {

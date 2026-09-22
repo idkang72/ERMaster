@@ -26,6 +26,7 @@ import ermaster.editor.model.AbstractModel;
 import ermaster.editor.model.ERDiagram;
 import ermaster.editor.model.diagram_contents.element.connection.Bendpoint;
 import ermaster.editor.model.diagram_contents.element.connection.ConnectionElement;
+import ermaster.editor.model.diagram_contents.element.connection.Relation;
 import ermaster.editor.model.diagram_contents.element.node.NodeElement;
 import ermaster.editor.model.diagram_contents.element.node.category.Category;
 import ermaster.editor.model.settings.CategorySetting;
@@ -238,19 +239,49 @@ public abstract class AbstractERDiagramConnectionEditPart extends
 					+ (bounds.height * connection.getTargetYp() / 100));
 		}
 
+		boolean isOrthogonal = this.isOrthogonalConnection();
+
 		ConnectionAnchor sourceAnchor = this.getConnectionFigure()
 				.getSourceAnchor();
 
 		if (sourceAnchor instanceof XYChopboxAnchor) {
-			((XYChopboxAnchor) sourceAnchor).setLocation(sourcePoint);
+			XYChopboxAnchor anchor = (XYChopboxAnchor) sourceAnchor;
+			anchor.setLocation(sourcePoint);
+			anchor.setOrthogonal(isOrthogonal);
 		}
 
 		ConnectionAnchor targetAnchor = this.getConnectionFigure()
 				.getTargetAnchor();
 
 		if (targetAnchor instanceof XYChopboxAnchor) {
-			((XYChopboxAnchor) targetAnchor).setLocation(targetPoint);
+			XYChopboxAnchor anchor = (XYChopboxAnchor) targetAnchor;
+			anchor.setLocation(targetPoint);
+			anchor.setOrthogonal(isOrthogonal);
 		}
+	}
+
+
+	protected boolean isOrthogonalConnection() {
+		ConnectionElement connection = (ConnectionElement) this.getModel();
+
+		if (! (connection instanceof Relation)) {
+			return false;
+		}
+
+		ERDiagram diagram = this.getDiagram();
+
+		if (diagram != null && diagram.getDiagramContents().getSettings().isUseBezierCurve()) {
+			return false;
+		}
+
+		boolean hasBendpoints = connection.getBendpoints() != null && ! connection.getBendpoints().isEmpty();
+		boolean hasFixedAnchor = connection.getSourceXp() != -1 || connection.getTargetXp() != -1;
+
+		if (! hasBendpoints && ! hasFixedAnchor) {
+			return false;
+		}
+
+		return true;
 	}
 
 	protected void refreshBendpoints() {

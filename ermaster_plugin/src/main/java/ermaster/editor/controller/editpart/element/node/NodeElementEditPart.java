@@ -33,8 +33,10 @@ import ermaster.editor.controller.editpart.element.AbstractModelEditPart;
 import ermaster.editor.controller.editpart.element.connection.AbstractERDiagramConnectionEditPart;
 import ermaster.editor.controller.editpart.element.node.column.ColumnEditPart;
 import ermaster.editor.controller.editpolicy.element.node.NodeElementGraphicalNodeEditPolicy;
+import ermaster.editor.model.ERDiagram;
 import ermaster.editor.model.ViewableModel;
 import ermaster.editor.model.diagram_contents.element.connection.ConnectionElement;
+import ermaster.editor.model.diagram_contents.element.connection.Relation;
 import ermaster.editor.model.diagram_contents.element.node.Location;
 import ermaster.editor.model.diagram_contents.element.node.NodeElement;
 import ermaster.editor.model.diagram_contents.element.node.category.Category;
@@ -258,7 +260,8 @@ public abstract class NodeElementEditPart extends AbstractModelEditPart
 
 		Rectangle bounds = this.getFigure().getBounds();
 
-		XYChopboxAnchor anchor = new XYChopboxAnchor(this.getFigure());
+		boolean isOrthogonal = this.isOrthogonalConnection(editPart);
+		XYChopboxAnchor anchor = new XYChopboxAnchor(this.getFigure(), isOrthogonal);
 
 		if (connection.getSourceXp() != -1 && connection.getSourceYp() != -1) {
 			anchor.setLocation(new Point(bounds.x
@@ -301,7 +304,8 @@ public abstract class NodeElementEditPart extends AbstractModelEditPart
 			IFigure sourceFigure = ((TableViewEditPart) connectionEditPart
 					.getSource()).getFigure();
 
-			XYChopboxAnchor anchor = new XYChopboxAnchor(this.getFigure());
+			boolean isOrthogonal = this.isOrthogonalConnection(connectionEditPart);
+			XYChopboxAnchor anchor = new XYChopboxAnchor(this.getFigure(), isOrthogonal);
 
 			Rectangle bounds = sourceFigure.getBounds();
 
@@ -340,7 +344,8 @@ public abstract class NodeElementEditPart extends AbstractModelEditPart
 
 		ConnectionElement connection = (ConnectionElement) editPart.getModel();
 
-		XYChopboxAnchor anchor = new XYChopboxAnchor(this.getFigure());
+		boolean isOrthogonal = this.isOrthogonalConnection(editPart);
+		XYChopboxAnchor anchor = new XYChopboxAnchor(this.getFigure(), isOrthogonal);
 
 		Rectangle bounds = this.getFigure().getBounds();
 
@@ -385,7 +390,8 @@ public abstract class NodeElementEditPart extends AbstractModelEditPart
 			IFigure targetFigure = ((AbstractModelEditPart) connectionEditPart
 					.getTarget()).getFigure();
 
-			XYChopboxAnchor anchor = new XYChopboxAnchor(this.getFigure());
+			boolean isOrthogonal = this.isOrthogonalConnection(connectionEditPart);
+			XYChopboxAnchor anchor = new XYChopboxAnchor(this.getFigure(), isOrthogonal);
 
 			Rectangle bounds = targetFigure.getBounds();
 
@@ -411,6 +417,35 @@ public abstract class NodeElementEditPart extends AbstractModelEditPart
 		}
 
 		return new XYChopboxAnchor(this.getFigure());
+	}
+
+
+	protected boolean isOrthogonalConnection(ConnectionEditPart editPart) {
+		if (editPart == null) {
+			return false;
+		}
+
+		Object model = editPart.getModel();
+
+		if (! (model instanceof Relation)) {
+			return false;
+		}
+
+		ERDiagram diagram = this.getDiagram();
+
+		if (diagram != null && diagram.getDiagramContents().getSettings().isUseBezierCurve()) {
+			return false;
+		}
+
+		ConnectionElement connection = (ConnectionElement) model;
+		boolean hasBendpoints = connection.getBendpoints() != null && ! connection.getBendpoints().isEmpty();
+		boolean hasFixedAnchor = connection.getSourceXp() != -1 || connection.getTargetXp() != -1;
+
+		if (! hasBendpoints && ! hasFixedAnchor) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public static Point getIntersectionPoint(Point s, IFigure figure) {
