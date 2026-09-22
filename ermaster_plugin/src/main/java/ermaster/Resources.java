@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.draw2d.ColorConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -91,6 +92,9 @@ public class Resources {
 
 	/** 다크 모드 기본 그리드 선 색상 (배경에 비해 살짝 덜 어두운 색상). */
 	public static final int[] DEFAULT_DARK_GRID_COLOR = new int[] { 65, 65, 75 };
+
+	/** 다크 모드 기본 그리드 그룹핑(페이지 경계) 선 색상 (기본 그리드보다 살짝 밝은 색상). */
+	public static final int[] DEFAULT_DARK_GRID_GROUP_COLOR = new int[] { 90, 92, 105 };
 
 	private static Map<Integer, Color> colorMap = new HashMap<Integer, Color>();
 
@@ -379,6 +383,74 @@ public class Resources {
 
 		return GRID_COLOR;
 	}
+
+
+	/**
+	 * 다크 모드 여부를 고려하여 적절한 그리드 그룹핑(페이지 경계) 선 색상을 반환합니다.
+	 * 기본 그리드 선 색상보다 살짝 밝은 색상으로 표현됩니다.
+	 * 
+	 * @param control 에디터 컨트롤
+	 * 
+	 * @return 렌더링에 사용할 Color 객체
+	 */
+	public static Color getGridGroupColor(Control control) {
+		if (isDarkMode(control)) {
+			Color bg = null;
+			if (control != null && ! control.isDisposed()) {
+				bg = control.getBackground();
+				if (bg != null) {
+					double brightness = (bg.getRed() * 0.299 + bg.getGreen() * 0.587 + bg.getBlue() * 0.114);
+					if (brightness >= 128) {
+						bg = null;
+					}
+				}
+			}
+
+			if (bg == null) {
+				Shell shell = null;
+				if (control != null && ! control.isDisposed()) {
+					shell = control.getShell();
+				}
+
+				if (shell == null) {
+					Display display = Display.getCurrent();
+					if (display == null) {
+						display = Display.getDefault();
+					}
+
+					if (display != null && ! display.isDisposed()) {
+						shell = display.getActiveShell();
+					}
+				}
+
+				if (shell != null && ! shell.isDisposed()) {
+					Color shellBg = shell.getBackground();
+					if (shellBg != null) {
+						double brightness = (shellBg.getRed() * 0.299 + shellBg.getGreen() * 0.587 + shellBg.getBlue() * 0.114);
+						if (brightness < 128) {
+							bg = shellBg;
+						}
+					}
+				}
+			}
+
+			if (bg != null) {
+				int r = Math.min(255, bg.getRed() + 45);
+				int g = Math.min(255, bg.getGreen() + 45);
+				int b = Math.min(255, bg.getBlue() + 55);
+
+
+				return getColor(new int[] { r, g, b });
+			}
+
+
+			return getColor(DEFAULT_DARK_GRID_GROUP_COLOR);
+		}
+
+
+		return ColorConstants.lightGray;
+	}
+
 
 	public static void disposeColorMap() {
 		for (Color color : colorMap.values()) {

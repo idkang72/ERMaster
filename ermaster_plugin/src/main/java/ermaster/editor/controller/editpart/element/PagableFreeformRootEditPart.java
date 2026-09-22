@@ -6,6 +6,8 @@ import org.eclipse.draw2d.geometry.Rectangle;
 import org.eclipse.gef.editparts.GridLayer;
 import org.eclipse.gef.editparts.ScalableFreeformRootEditPart;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.widgets.Control;
+import ermaster.Resources;
 import ermaster.editor.model.ERDiagram;
 import ermaster.editor.model.settings.PageSetting;
 
@@ -46,12 +48,15 @@ public class PagableFreeformRootEditPart extends ScalableFreeformRootEditPart {
 			Rectangle rect = clip;
 
 			Color color = g.getForegroundColor();
-			g.setForegroundColor(ColorConstants.lightGray);
+			Control control = (getViewer() != null) ? getViewer().getControl()
+					: null;
+			g.setForegroundColor(Resources.getGridGroupColor(control));
 
 			int startX = rect.x;
 			if (startX > 0) {
 				startX = 0;
 			}
+
 			int startY = rect.y;
 			if (startY > 0) {
 				startY = 0;
