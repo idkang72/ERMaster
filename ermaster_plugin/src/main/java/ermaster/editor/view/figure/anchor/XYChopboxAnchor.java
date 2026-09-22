@@ -8,7 +8,9 @@ import org.eclipse.draw2d.geometry.Rectangle;
 
 public class XYChopboxAnchor extends ChopboxAnchor {
 
-	private static final int EDGE_TOLERANCE = 2;
+	private static final int EDGE_TOLERANCE = 3;
+
+	private static final int SNAP_THRESHOLD = 30;
 
 	private Point location;
 
@@ -42,20 +44,24 @@ public class XYChopboxAnchor extends ChopboxAnchor {
 				boolean isRightEdge = Math.abs(point.x - r.right()) <= EDGE_TOLERANCE;
 
 				if ((isLeftEdge || isRightEdge) && reference.y >= r.y && reference.y <= r.bottom()) {
-					int x = isLeftEdge ? r.x : r.right();
+					if (Math.abs(point.y - reference.y) <= SNAP_THRESHOLD) {
+						int x = isLeftEdge ? r.x : r.right();
 
 
-					return new Point(x, reference.y);
+						return new Point(x, reference.y);
+					}
 				}
 
 				boolean isTopEdge = Math.abs(point.y - r.y) <= EDGE_TOLERANCE;
 				boolean isBottomEdge = Math.abs(point.y - r.bottom()) <= EDGE_TOLERANCE;
 
 				if ((isTopEdge || isBottomEdge) && reference.x >= r.x && reference.x <= r.right()) {
-					int y = isTopEdge ? r.y : r.bottom();
+					if (Math.abs(point.x - reference.x) <= SNAP_THRESHOLD) {
+						int y = isTopEdge ? r.y : r.bottom();
 
 
-					return new Point(reference.x, y);
+						return new Point(reference.x, y);
+					}
 				}
 			}
 
