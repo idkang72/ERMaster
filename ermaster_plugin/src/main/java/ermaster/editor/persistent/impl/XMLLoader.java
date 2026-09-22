@@ -209,21 +209,19 @@ public class XMLLoader {
 
 			if (referencedColumnIds != null) {
 				for (String referencedColumnId : referencedColumnIds) {
-					try {
-						Integer.parseInt(referencedColumnId);
+					if (referencedColumnId == null || referencedColumnId.trim().isEmpty()) {
+						continue;
+					}
 
-						NormalColumn referencedColumn = this.columnMap
-								.get(referencedColumnId);
-						if (referencedColumn != null && ! referencedColumnList.contains(referencedColumn)) {
-							referencedColumnList.add(referencedColumn);
+					NormalColumn referencedColumn = this.columnMap
+							.get(referencedColumnId.trim());
+					if (referencedColumn != null && ! referencedColumnList.contains(referencedColumn)) {
+						referencedColumnList.add(referencedColumn);
 
-							if (foreignKeyColumnSet.contains(referencedColumn)
-									&& foreignKeyColumn != referencedColumn) {
-								reduce(foreignKeyColumnSet, referencedColumn);
-							}
+						if (foreignKeyColumnSet.contains(referencedColumn)
+								&& foreignKeyColumn != referencedColumn) {
+							reduce(foreignKeyColumnSet, referencedColumn);
 						}
-
-					} catch (NumberFormatException e) {
 					}
 				}
 			}
@@ -231,28 +229,27 @@ public class XMLLoader {
 			if (relationIds != null) {
 				Set<String> processedRelationIds = new HashSet<String>();
 				for (String relationId : relationIds) {
-					try {
-						if (processedRelationIds.contains(relationId)) {
-							continue;
-						}
-						processedRelationIds.add(relationId);
+					if (relationId == null || relationId.trim().isEmpty()) {
+						continue;
+					}
 
-						Integer.parseInt(relationId);
+					String trimmedRelationId = relationId.trim();
+					if (processedRelationIds.contains(trimmedRelationId)) {
+						continue;
+					}
+					processedRelationIds.add(trimmedRelationId);
 
-						Relation relation = (Relation) this.connectionMap
-								.get(relationId);
-						if (relation != null) {
-							for (NormalColumn referencedColumn : referencedColumnList) {
-								if (referencedColumn.getColumnHolder() == relation
-										.getSourceTableView()) {
-									foreignKeyColumn.addReference(referencedColumn,
-											relation);
-									break;
-								}
+					Relation relation = (Relation) this.connectionMap
+							.get(trimmedRelationId);
+					if (relation != null) {
+						for (NormalColumn referencedColumn : referencedColumnList) {
+							if (referencedColumn.getColumnHolder() == relation
+									.getSourceTableView()) {
+								foreignKeyColumn.addReference(referencedColumn,
+										relation);
+								break;
 							}
 						}
-
-					} catch (NumberFormatException e) {
 					}
 				}
 			}
@@ -1050,20 +1047,24 @@ public class XMLLoader {
 
 		String[] relationIds = this.getTagValues(element, "relation");
 		if (relationIds != null) {
-			context.columnRelationMap.put(normalColumn, relationIds);
+			List<String> relList = new ArrayList<String>();
+			for (String relId : relationIds) {
+				if (relId != null && ! relId.trim().isEmpty()) {
+					relList.add(relId.trim());
+				}
+			}
+			if (! relList.isEmpty()) {
+				context.columnRelationMap.put(normalColumn,
+						relList.toArray(new String[relList.size()]));
+			}
 		}
 
 		String[] referencedColumnIds = this.getTagValues(element,
 				"referenced_column");
 		List<String> temp = new ArrayList<String>();
 		for (String str : referencedColumnIds) {
-			try {
-				if (str != null) {
-					Integer.parseInt(str);
-					temp.add(str);
-				}
-
-			} catch (NumberFormatException e) {
+			if (str != null && ! str.trim().isEmpty()) {
+				temp.add(str.trim());
 			}
 		}
 
